@@ -68,7 +68,6 @@ module MyMath
   def self.is_prime?(val)
     LEHMANN_TESTS.times do
       a = MyRandom.random_range(1, val - 1)
-      # puts val - 1
       x = mod_exp(a, ((val - 1) / 2), val)
       if x == 1 || x == (val-1)
         next

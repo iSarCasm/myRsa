@@ -3,8 +3,8 @@ require_relative 'my_ui'
 
 class MyRandom
 	BASE = 2										# система счисления разрядов двоичная
-	SIZE = 20										# 20 разряда
-	START_SEED 		= 104_020_010	# стартовое зерно
+	SIZE = 20
+	START_SEED 		= 20_010						# стартовое зерно
 	@current_seed = nil	# текущее зерно
 
 	def self.randomize
@@ -12,15 +12,10 @@ class MyRandom
 	end
 
 	def self.random
-		randomize unless @current_seed
-
-		randomize if @current_seed % 50 == 0 # костыль
-		randomize if @current_seed.to_s[-2..-1] == "74" # костыль 2
-
-		r1 	= rotate(to_bitset(@current_seed), +SIZE / 4	)	# зерно, сдвинутое вправо
-		r2 	= rotate(to_bitset(@current_seed), -SIZE / 4	)	# зерно, сдвинутое влево
-		# ap r2.to_i(BASE).to_s(16)
-		val = (r1.to_i(BASE) + r2.to_i(BASE))	% max_value # их произвидение по модулю
+		randomize
+		r1 	= rotate(to_bitset(@current_seed), +SIZE / 5	)	# зерно, сдвинутое вправо
+		r2 	= rotate(to_bitset(@current_seed), -SIZE / 5	)	# зерно, сдвинутое влево
+		val = (r1.to_i(BASE) + r2.to_i(BASE))	% max_value # их сумма по модулю
 		@current_seed = val 															# обновляем зерно
 		return (val)
 	end
@@ -29,12 +24,18 @@ class MyRandom
 		return (random % (to - from)) + from
 	end
 
-	def self.random_prime
+	def self.random_prime(from = nil, to = nil)
 		i = 0
 		loop do
-			r = random
+			if from
+				r = random_range(from.to_i, to.to_i)
+			else
+				r = random
+			end
 			r += 1 if r % 2 == 0
-			# puts "testing #{r}"
+			if block_given?
+				next if not yield(r)
+			end
 			return r if MyMath.is_prime?(r)
 			fail "100k tries - no primes" if i > 100_000 # endless loop break
 			i += 1
@@ -81,8 +82,10 @@ class MyRandom
 		m 	= t.min
 		s 	= t.sec
 		ns 	= t.nsec
-		seed = (y*10**6 + m*10**5 + d*10**4 + h*10**3 + m*10**2 + s*10 + ns) % max_value
+		seed = (y*13**6 + m*11**5 + d*7**4 + h*5**3 + m*3**2 + s + ns/100) % max_value
 		# ap "seed form time = #{seed.to_s(16)}"
+		# ap ns
+		# ap seed
 		return seed
 	end
 end
