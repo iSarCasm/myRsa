@@ -79,10 +79,10 @@ require_relative 'MyRSA/my_rsa'
 # 	break if gets.chomp == 'c'
 # end
 # puts "\n"
-binding.pry
+# binding.pry
 rsa = MyRSA.new
-rsa.encrypt_file('src.txt')
-ap rsa.decrypt_file('secure_data.txt', 'dst.txt')
+rsa.encrypt_file('file/source.txt')
+ap rsa.decrypt_file('file/secure_data.txt', 'dst.txt')
 
 # ap "My RSA:"
 # 100.times do

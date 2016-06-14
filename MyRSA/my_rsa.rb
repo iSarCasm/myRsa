@@ -74,13 +74,19 @@ class MyRSA
 
   def encrypt_message(msg)
     blocks = Block.build(msg)
+    # puts "Source blocks:"
+    # puts blocks
     new_blocks = encrypt_blocks(blocks)
+    # puts "Encrypted blocks:"
+    # puts new_blocks
     Block.join(new_blocks, 24)
   end
 
   def decrypt_message(msg)
     blocks = Block.build(msg, 24)
+    # puts blocks
     new_blocks = decrypt_blocks(blocks)
+    # puts new_blocks
     Block.join(new_blocks, 20)
   end
 
@@ -88,6 +94,8 @@ class MyRSA
     f = File.open(file,'rb')
     data = f.read
     enc = encrypt_message(data)
+    puts "Encrypted string:"
+    puts enc.hash
     File.open(dst, 'w') { |file| file.write(transport(enc)) }
   end
 
@@ -95,6 +103,8 @@ class MyRSA
     f = File.open(file,'rb')
     data = f.read
     decoded = transport(data, :decode)
+    puts "Decoded string:"
+    puts decoded.hash
     msg = decrypt_message(decoded)
     if dst then
       File.open(dst, 'w') { |file| file.write(msg) }
@@ -102,11 +112,19 @@ class MyRSA
     return msg
   end
 
+  # def transport(msg, func=:encode)
+	# 	if func == :encode
+	# 		Base64.encode64(msg)
+	# 	elsif func == :decode
+	# 		Base64.decode64(msg)
+	# 	end
+	# end
+  #
   def transport(msg, func=:encode)
 		if func == :encode
-			Base64.encode64(msg)
+			MyTransport.encode(msg)
 		elsif func == :decode
-			Base64.decode64(msg)
+			MyTransport.decode(msg)
 		end
 	end
 end
