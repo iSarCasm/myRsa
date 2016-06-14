@@ -1,100 +1,153 @@
-require 'awesome_print'
-require 'pry'
 require_relative 'MyRSA/my_rsa'
 
-# time_seed = MyRandom.get_seed_from_time
-# ap "seed form time = #{time_seed.to_s(16)}"
-# ap "and this seed in bitset is:"
-# ap MyRandom.to_bitset(time_seed)
-# ap "======="
-# ap "number 127 to bitset = #{MyRandom.to_bitset(127)}"
-# ap "number 300 to bitset = #{MyRandom.to_bitset(300)}"
+def test_random_randomize
+  puts "Жмите Enter, чтобы получить очередное случайное зерно:"
+  loop do
+   	print MyRandom.get_seed_from_time
+   	break if gets != "\n"
+  end
+end
 
-# ap "======="
-# x = "1100101"
-# ap "#{x} << 3: #{MyRandom.rotate(x, 3)}"
-# ap "#{x} >> 2: #{MyRandom.rotate(x, -2)}"
+def test_random
+  puts "Жмите Enter, чтобы получить очередное случайное число:"
+  loop do
+   	print MyRandom.random
+   	break if gets != "\n"
+  end
+end
 
-# gets
+def test_random_range
+  puts "Минимум:"
+  min = gets.chomp.to_i
+  puts "Максимум:"
+  max = gets.chomp.to_i
+  puts "Жмите Enter, чтобы получить очередное случайное число:"
+  loop do
+   	print MyRandom.random_range(min, max)
+   	break if gets != "\n"
+  end
+end
 
-# puts "Give me smth random pls (press any key)"
-# loop do
-# 	ap MyRandom.random
-# 	break if gets.chomp == 'c'
-# end
-# puts "\n"
+def test_random_prime
+  puts "Жмите Enter, чтобы получить очередное случайное простое:"
+  loop do
+   	print MyRandom.random_prime
+   	break if gets != "\n"
+  end
+end
 
-# puts "Random Range:"
-# loop do
-# 	ap MyRandom.random_range(1, 228)
-# 	break if gets.chomp == 'c'
-# end
-# puts "\n"
+def test_random_prime_range
+  print "Минимум: "
+  min = gets.chomp.to_i
+  print "Максимум: "
+  max = gets.chomp.to_i
+  puts "Жмите Enter, чтобы получить очередное случайное простое:"
+  loop do
+    puts MyRandom.random_prime(min, max)
+    break if gets != "\n"
+  end
+end
 
-# puts "Random Quality Test:"
-# loop do
-# 	ap MyRandom.random
-# 	sleep 0.2
-# end
-# puts "\n"
+def test_gcd
+  print "A:"
+  a = gets.chomp.to_i
+  print "B:"
+  b = gets.chomp.to_i
+  puts "GCD(A, B) = #{MyMath.gcd(a,b)}"
+end
 
-# puts "Random Quality Test:"
-# loop do
-# 	ap MyRandom.random
-# 	sleep 0.1
-# end
-# puts "\n"
+def test_modexp
+  puts "a^m mod n"
+  print "a: "
+  a = gets.chomp.to_i
+  print "m: "
+  m = gets.chomp.to_i
+  print "n: "
+  n = gets.chomp.to_i
+  puts "a^m mod n = #{MyMath.mod_exp(a, m, n)}"
+end
 
-# puts "Conditional random: "
-# ap "random | 5 : #{MyRandom.random_condition { |x| x % 5 == 0 }}"
-# puts "\n"
+def test_prime
+  print "Введите число: "
+  x = gets.chomp.to_i
+  puts "#{x} - простое? Ответ: #{MyMath.is_prime?(x)}"
+end
 
-# ap "23^11 mod 15 = #{(23**11)%15} = #{MyMath.mod_exp(23, 11, 15)}"
-# ap "7^2 mod 5 = #{(7**2)%5} = #{MyMath.mod_exp(7, 2, 5)}"
-# ap "6^128 mod 5 = #{(6**128)%5} = #{MyMath.mod_exp(6, 128, 5)}"
-# ap "134^16 mod 5 = #{(134**16)%5} = #{MyMath.mod_exp(134, 16, 5)}"
-# puts "\n"
+def test_euklides
+  puts "a * d - b * y = 1"
+  print "a: "
+  a = gets.chomp.to_i
+  print "b: "
+  b = gets.chomp.to_i
+  puts "#{a}d - #{b}y = 1;\t #{MyMath.euklides(a, b)}\n"
+end
 
-# ap "gcd 7 and 5 = #{MyMath.gcd(7,5)}"
-# ap "gcd 55 and 11 = #{MyMath.gcd(55,11)}"
-# ap "gcd 10 and 110 = #{MyMath.gcd(10,110)}"
-# ap "gcd 7 and 49 = #{MyMath.gcd(7,49)}"
-# ap "gcd 2 and 4 = #{MyMath.gcd(2,4)}"
+def test_rsa
+  puts "Введите число для кодирования:"
+  a = gets.chomp.to_i
+  rsa = MyRSA.new
+  b = rsa.encrypt(a)
+  print "Зашифрованное число: "
+  puts b
+  print "Расшифруем обратно: "
+  puts rsa.decrypt(b)
+end
 
-# ap "Euklides Algh.:"
-# puts "7d - 20y = 1;\t #{MyMath.euklides(7, 20)}\n"
-# puts "3d - 8y = 1;\t #{MyMath.euklides(3, 8)}\n"
-# puts "39d - 13y = 1;\t #{MyMath.euklides(39, 13)}\n"
-#
+def test_transport_enc
+  print "Введите строку для кодирования: "
+  z = gets.chomp
+  puts MyTransport.encode(z)
+end
 
-# ap "Lehman Prime Test:"
-# for i in 1..1 do
-# 	x = MyRandom.random % 100 + 1
-# 	puts "is #{x} prime?\t #{MyMath.is_prime?(x)}"
-# end
+def test_transport_dec
+  puts "Длина строки кратна 2, состоит из символов 0-f"
+  puts "Введите строку для декодирования:"
+  z = gets.chomp
+  puts MyTransport.decode(z)
+end
 
-# ap "Get Random Prime"
-# loop do
-# 	ap MyRandom.random_prime
-# 	break if gets.chomp == 'c'
-# end
-# puts "\n"
-# binding.pry
 
-rsa = MyRSA.new
-rsa.encrypt_file('source.txt')
-ap rsa.decrypt_file('secure_data.txt', 'dst.txt')
-
-# ap "My RSA:"
-# 100.times do
-#   rsa = MyRSA.new
-#   ap rsa
-#   msg = 'lllllllllll aaaaaaa lll'
-#   enc = rsa.encrypt_message(msg)
-#   dec = rsa.decrypt_message(enc)
-#   ap msg
-#   ap enc
-#   ap dec
-#   # dec.each_with_index { |x, i| ap x == msg[i] }
-#   binding.pry
-# end
+puts "Меню тестирования:"
+puts "
+  1 - Randomize класса MyRandom
+  2 - Random (случайное число)
+  3 - Random Range (случайное число в переделах)
+  4 - Random Prime (случайное простое число)
+  5 - Random Range Prime (случайное простое в пределах)
+  6 - GCD, НОД
+  7 - ModExp (модульное возведение в степень)
+  8 - Тест на простоту Лемана
+  9 - Алгоритм Евклида
+  10 - Транспортное кодирование
+  11 - Транспортное декодирование
+  12 - Алгоритм RSA
+"
+option = gets.chomp
+case option
+when "1"
+  test_random_randomize
+when "2"
+  test_random
+when "3"
+  test_random_range
+when "4"
+  test_random_prime
+when "5"
+  test_random_prime_range
+when "6"
+  test_gcd
+when "7"
+  test_modexp
+when "8"
+  test_prime
+when "9"
+  test_euklides
+when "10"
+  test_transport_enc
+when "11"
+  test_transport_dec
+when "12"
+  test_rsa
+else
+  puts "Ошибка выбора!"
+end
