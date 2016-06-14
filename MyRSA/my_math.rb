@@ -1,5 +1,3 @@
-require_relative 'my_ui'
-
 module MyMath
   LEHMANN_TESTS = 16
 
@@ -30,7 +28,7 @@ module MyMath
    		end
    		return p
     rescue
-      puts "ERROR: #{a} #{m} #{n}"
+      puts "ERROR: a:#{a} m:#{m} n:#{n}"
     end
  	end
 

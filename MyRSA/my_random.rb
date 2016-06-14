@@ -1,5 +1,4 @@
 require_relative 'my_math'
-require_relative 'my_ui'
 
 class MyRandom
 	BASE = 2										# система счисления разрядов двоичная

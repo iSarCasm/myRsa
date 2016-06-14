@@ -1,1 +1,0 @@
-The Ruby File class will give you the ins and outs of ::new and ::open but its parent, the IO class, gets into the depth of #read and #write.
