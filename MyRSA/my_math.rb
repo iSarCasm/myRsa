@@ -1,7 +1,7 @@
 module MyMath
   LEHMANN_TESTS = 16
 
- 	def self.gcd(x, y)
+ 	def self.gcd(x, y) # НОД
  		loop do
 	 		if x > y
 	 			x, y = y, x % y
@@ -13,7 +13,7 @@ module MyMath
  		return x
  	end
 
- 	def self.mod_exp(a, m, n)
+ 	def self.mod_exp(a, m, n) # модульное возведение в степень
     begin
    		p = 1
    		mi = a % n
@@ -24,15 +24,14 @@ module MyMath
    				p = (p*mi) % n
    			end
    			mi = (mi*mi) % n
-        # puts "i = #{i}\t bi = #{bi}\t p = #{p}\t mi = #{mi}"
    		end
    		return p
     rescue
-      puts "ERROR: a:#{a} m:#{m} n:#{n}"
+      puts "ERROR: a:#{a} m:#{m} n:#{n}"  # в случае какой-либо ошибки вывести параметры для отладки
     end
  	end
 
-  def self.euklides(a, b)
+  def self.euklides(a, b) # алгоритм Евклида
     i = 2
     # STEP 0
     r_0 = a
@@ -63,16 +62,16 @@ module MyMath
     end
   end
 
-  def self.is_prime?(val)
+  def self.is_prime?(val) # случайный тест на простоту Леммана
     LEHMANN_TESTS.times do
       a = MyRandom.random_range(1, val - 1)
       x = mod_exp(a, ((val - 1) / 2), val)
       if x == 1 || x == (val-1)
-        next
+        next  # 50% шанс, что число НЕ составное, продолжаем проверку
       else
-        return false
+        return false # число точно составное, завершаем проверку
       end
     end
-    return true
+    return true # признаки составного числа не найдены
   end
  end

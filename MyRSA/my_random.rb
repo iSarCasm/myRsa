@@ -1,9 +1,8 @@
 require_relative 'my_math'
 
 class MyRandom
-	BASE = 2										# система счисления разрядов двоичная
-	SIZE = 20
-	START_SEED 		= 20_010						# стартовое зерно
+	BASE = 2	# система счисления разрядов двоичная
+	SIZE = 20	# размер блок - 20 бит
 	@current_seed = nil	# текущее зерно
 
 	def self.randomize
@@ -31,24 +30,13 @@ class MyRandom
 			else
 				r = random
 			end
-			r += 1 if r % 2 == 0
+			r += 1 if r % 2 == 0 # если кратное 2, то просто добавляем 1
 			if block_given?
-				next if not yield(r)
+				next if not yield(r) # если передано доп. условие, то проверяем его
 			end
-			return r if MyMath.is_prime?(r)
-			fail "100k tries - no primes" if i > 100_000 # endless loop break
-			i += 1
-		end
-	end
-
-	def self.random_condition
-		return unless block_given?
-		i = 0
-		loop do
-			r = random
-			return r if yield(r)
-			fail "100k tries - nope" if i > 100_000 # endless loop defense
-			i += 1
+			return r if MyMath.is_prime?(r) # число просто?
+			fail "100k tries - no primes" if i > 100_000 # если за 100 000 раз не нашли простое
+			i += 1 # то покинуть цикл
 		end
 	end
 
@@ -82,9 +70,6 @@ class MyRandom
 		s 	= t.sec
 		ns 	= t.nsec
 		seed = (y*13**6 + m*11**5 + d*7**4 + h*5**3 + m*3**2 + s + ns/100) % max_value
-		# ap "seed form time = #{seed.to_s(16)}"
-		# ap ns
-		# ap seed
 		return seed
 	end
 end

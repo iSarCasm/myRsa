@@ -1,27 +1,24 @@
-require 'base64'
 require_relative 'my_random'
 require_relative 'my_math'
 require_relative 'block'
 require_relative 'my_transport'
 
 class MyRSA
-  PRIMES_NEEDED = 10_000
-
   def initialize(options={})
-    if options[:public]
-      f = File.open(options[:public],'rb')
-      data = f.read.split(" ")
+    if options[:public] # если передали файл с публичными ключами
+      f = File.open(options[:public],'rb')  # прочитать файл
+      data = f.read.split(" ")              # разделить на 2 части
       @e = data[0].to_i
       @n = data[1].to_i
-    elsif options[:secret]
-      f = File.open(options[:secret],'rb')
-      data = f.read.split(" ")
+    elsif options[:secret] # если передали файл с секретными ключами
+      f = File.open(options[:secret],'rb')  # прочитать файл
+      data = f.read.split(" ")              # разделить на 2 части
       @d = data[0].to_i
       @n = data[1].to_i
-    else
-      @p = MyRandom.random_prime(Math.sqrt(2**20), Math.sqrt(2**21))
+    else # если файл не передали, то генерируем все
+      @p = MyRandom.random_prime(Math.sqrt(2**20), Math.sqrt(2**21)) # случайное 21 битное число
       @q = MyRandom.random_prime(Math.sqrt(2**20), Math.sqrt(2**21)) do |x|
-        x != @p
+        x != @p # случайное 21 битное число, которое не равно первому
       end
 
       puts "p = #{@p.to_s(16)}"
@@ -39,7 +36,7 @@ class MyRSA
         hits += 1;
         @e = MyRandom.random_range(3, fi)
         break if MyMath.gcd(@e, fi) == 1
-        fail "Failed to find" if hits > PRIMES_NEEDED
+        fail "Failed to find" if hits > 10_000 # если за 10 000 попыток не нашли взаимнопростое, то ошибка
       end
       @d = MyMath.euklides(@e, fi)[0]
       puts "Public key (e, n) - (#{@e}, #{@n})"
@@ -48,63 +45,53 @@ class MyRSA
   end
 
   def save_keys(pub, secret)
-    File.open(pub, 'w') { |file| file.write("#{@e} #{@n}") }
-    File.open(secret, 'w') { |file| file.write("#{@d} #{@n}") }
+    File.open(pub, 'w') { |file| file.write("#{@e} #{@n}") } # сохранение публичных ключей
+    File.open(secret, 'w') { |file| file.write("#{@d} #{@n}") } # сохранение секретных ключей
   end
 
   def encrypt(msg)
-    MyMath.mod_exp(msg.to_i, @e, @n)
+    MyMath.mod_exp(msg.to_i, @e, @n) # шифрование числа
   end
 
   def decrypt(msg)
-    MyMath.mod_exp(msg.to_i, @d, @n)
+    MyMath.mod_exp(msg.to_i, @d, @n) # расшифровка числа
   end
 
-  def encrypt_blocks(blocks)
+  def encrypt_blocks(blocks) # шифрование массива чисел (блоков)
     blocks.map do |block|
       encrypt(block)
     end
   end
 
-  def decrypt_blocks(blocks)
+  def decrypt_blocks(blocks) # расшифровка массива чисел (блоков)
     blocks.map do |block|
       decrypt(block)
     end
   end
 
-  def encrypt_message(msg)
+  def encrypt_message(msg) # шифрование строки
     blocks = Block.build(msg)
-    # puts "Source blocks:"
-    # puts blocks
     new_blocks = encrypt_blocks(blocks)
-    # puts "Encrypted blocks:"
-    # puts new_blocks
     Block.join(new_blocks, 24)
   end
 
-  def decrypt_message(msg)
+  def decrypt_message(msg) # расшифровка строки
     blocks = Block.build(msg, 24)
-    # puts blocks
     new_blocks = decrypt_blocks(blocks)
-    # puts new_blocks
     Block.join(new_blocks, 20)
   end
 
-  def encrypt_file(file, dst="secure_data.txt")
+  def encrypt_file(file, dst="secure_data.txt") # шифрование файла
     f = File.open(file,'rb')
     data = f.read
     enc = encrypt_message(data)
-    puts "Encrypted string:"
-    puts enc.hash
     File.open(dst, 'w') { |file| file.write(transport(enc)) }
   end
 
-  def decrypt_file(file, dst=nil)
+  def decrypt_file(file, dst=nil) # расшифровка файла
     f = File.open(file,'rb')
     data = f.read
     decoded = transport(data, :decode)
-    puts "Decoded string:"
-    puts decoded.hash
     msg = decrypt_message(decoded)
     if dst then
       File.open(dst, 'w') { |file| file.write(msg) }
@@ -112,15 +99,7 @@ class MyRSA
     return msg
   end
 
-  # def transport(msg, func=:encode)
-	# 	if func == :encode
-	# 		Base64.encode64(msg)
-	# 	elsif func == :decode
-	# 		Base64.decode64(msg)
-	# 	end
-	# end
-  #
-  def transport(msg, func=:encode)
+  def transport(msg, func=:encode) # транспортное кодирование
 		if func == :encode
 			MyTransport.encode(msg)
 		elsif func == :decode
