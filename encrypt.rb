@@ -1,4 +1,5 @@
 require_relative 'MyRSA/my_rsa'
+path = ENV["OCRA_EXECUTABLE"] || __FILE__
 
 puts "===MyRSA (Igor Tsykalo)==="
 puts "ENCCRYPTION"
@@ -9,14 +10,14 @@ if generate == "\n" then
   puts "Where to save genrated public keys (enter = pubkeys.txt)?"
   p = gets
   if p == "\n" then
-    p = "#{File.dirname(__FILE__)}/files/pubkeys.txt"
+    p = "#{path}/../files/pubkeys.txt"
   else
-    p = "#{File.dirname(__FILE__)}/files/#{p.chomp}"
+    p = "#{path}/../files/#{p.chomp}"
   end
   puts "Where to save genrated secret keys (enter = secretkeys.txt)?"
   s = gets
   if s == "\n" then
-    s = "#{File.dirname(__FILE__)}/files/secretkeys.txt"
+    s = "#{path}/../files/secretkeys.txt"
   else
     s = p.chomp
   end
@@ -25,9 +26,9 @@ else
   puts "Relative path to public keys file (enter - pubkeys.txt):"
   file = gets
   if file == "\n" then
-    file = "#{File.dirname(__FILE__)}/files/pubkeys.txt"
+    file = "#{path}/../files/pubkeys.txt"
   else
-    file = "#{File.dirname(__FILE__)}/files/#{file.chomp}"
+    file = "#{path}/../files/#{file.chomp}"
   end
   rsa = MyRSA.new(public: file)
 end
@@ -37,14 +38,14 @@ file = gets
 puts "Name ecnrypted file (enter - encrypted.txt):"
 dst = gets
 if file == "\n" then
-  file = "#{File.dirname(__FILE__)}/files/source.txt"
+  file = "#{path}/../files/source.txt"
 else
-  file = "#{File.dirname(__FILE__)}/files/#{file.chomp}"
+  file = "#{path}/../files/#{file.chomp}"
 end
 if dst == "\n" then
-  dst = "#{File.dirname(__FILE__)}/files/encrypted.txt"
+  dst = "#{path}/../files/encrypted.txt"
 else
-  dst = "#{File.dirname(__FILE__)}/files/#{dst.chomp}"
+  dst = "#{path}/../files/#{dst.chomp}"
 end
 rsa.encrypt_file(file, dst)
 
